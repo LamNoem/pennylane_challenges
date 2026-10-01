@@ -1,0 +1,36 @@
+import json
+import pennylane as qp
+import pennylane.numpy as np
+# Create a default.qubit device with 2 qubits / wires using qp.device
+dev = qp.device("default.qubit",wires=2)
+# Turn your circuit into a QNode
+@qp.qnode(dev)
+def circuit(angles):
+    """
+    The quantum circuit that you will simulate.
+
+    Args:
+        angles (list(float)): The gate angles in the circuit.
+
+    Returns:
+        (numpy.tensor): The probability vector of the underlying quantum state
+        that this circuit produces.
+    """
+
+    # Put the rotation gates here
+    qp.RY(angles[0],0)
+    qp.RY(angles[1],1)
+    return qp.probs(wires=[0, 1])
+
+# These functions are responsible for testing the solution.
+def run(test_case_input: str) -> str:
+    angles = json.loads(test_case_input)
+    output = circuit(angles).tolist()
+
+    return str(output)
+
+
+def check(solution_output: str, expected_output: str) -> None:
+    solution_output = json.loads(solution_output)
+    expected_output = json.loads(expected_output)
+    assert np.allclose(solution_output, expected_output, rtol=1e-4)
