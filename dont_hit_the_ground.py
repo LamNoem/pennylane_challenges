@@ -88,3 +88,15 @@ for i, (input_, expected_output) in enumerate(test_cases):
 
 #using pennylane function timed out, 
 # using the math , guessed the right initial probability (based on the initial state, 50/50 superposition or start at ket(1))
+
+# Gad out matrix explanation:
+# The Populations (The Diagonal Elements)
+# • \(\rho_{00}^{out} = (1 - p\gamma)\rho_{00} + (1-p)\gamma\rho_{11}\)
+# 	• Meaning: You keep most of your ground state population, plus you gain whatever decayed down from the excited state.
+# • \(\rho_{11}^{out} = p\gamma\rho_{00} + (1 - (1-p)\gamma)\rho_{11}\)
+# 	• Meaning: You keep some of your excited state population, plus you gain whatever ambient heat kicked up from the ground state.
+
+# The Coherences (The Off-Diagonal Elements)
+# • \(\rho_{01}^{out} = \sqrt{1-\gamma}\rho_{01}\)
+# • \(\rho_{10}^{out} = \sqrt{1-\gamma}\rho_{10}\)
+# 	• Meaning: The quantum coherence simply decays uniformly at a rate of \(\sqrt{1-\gamma }\), entirely independent of the environment's temperature parameter \(p\).
