@@ -14,14 +14,24 @@ def U(n_wires, label):
     """
 
     # Put your code here #
-    qp.QFT(wires=range(n_wires, inverse=True))
-    #now 50/50 ket(m) or ket(2^k -m)
+    m = label
+    #qml.adjoint is a functional modifier that takes a quantum operation (or an entire sequence of operations) and creates its adjoint, which is mathematically the complex conjugate transpose (\(U^{\dag }\)) of that operation.
+    # In quantum computing, applying the adjoint of a unitary matrix effectively undoes or reverses the physical transformation of that gate.
+    
+    #apply inverse QFT to first n-1 wires
+    qp.adjoint(qp.QFT)(wires=range(n_wires-1))
+    #now 50/50 register state of ket(m) or ket(2^k -m)
     #do i have 2^k -m or m
     #convert both to binary
+    bits = n_wires - 1
+    binary_list_m = [(m >> i) & 1 for i in reversed(range(bits))]
+    binary_list_2k_minus_m = [(2**bits - m >> i) & 1 for i in reversed(range(bits))]
+    
     #create two multi control gates (one trigers on 2^k-m, the other on m)
     # apply to last wire.
-
-    #use to flip last qubit
+    qp.MultiControlledX(wires=range(n_wires), control_values=binary_list_m)
+    qp.MultiControlledX(wires=range(n_wires), control_values=binary_list_2k_minus_m)
+    
 # These functions are responsible for testing the solution.
 def round_if_close(x):
 
