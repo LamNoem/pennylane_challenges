@@ -8,25 +8,7 @@ wires_aux = [6, 7, 8, 9, 10]  # auxiliary qubits you can use
 # Put your code here #
 
 # Create all the helper functions you need here
-def twos_comp(reg_wires):
-    for wire in reg_wires:
-        qp.X(wires=wire)
-    #[4,5]
-    for wire in reg_wires[1:]: 
-        qp.CNOT(wires=[wire-1,wire])
-        
-def add():
-    for wire in wires_aux:
-        qp.X(wires=wire)
-    for i in range(3):
-        qp.MultiControlledX(wires=[i,i+3,i+6], control_values=[1,1])
-        qp.MultiControlledX(wires=[i+6,i+7], control_values=[0])
 
-def equal_to_d(binary_list_d):
-    for d_wire_num, needed_val in zip([9,8,7,6],binary_list_d):
-        qp.MultiControlledX(wires=[d_wire_num,10], control_values=[needed_val])
-        
-        
 def oracle_distance(d):
     """
     Args:
@@ -38,16 +20,25 @@ def oracle_distance(d):
     """
 
     # Put your code here
-    twos_comp(wires_n)
-    add()
-    twos_comp(wires_n)
-    bits = 4
-    binary_list_d = [(d >> i) & 1 for i in reversed(range(bits))]
-    equal_to_d(binary_list_d)
-    qp.CZ(wires=[10,0])
-    zero_state = np.zeros(2**5, dtype=complex)
-    zero_state[0] = 1.0
-    qp.StatePrep(zero_state, wires=[6,7,8,9,10])
+    bits = 3
+    for m in range(8):
+        for n in range(8):
+            if abs(m -n )== d:
+                binary_list_m = [(m >> i) & 1 for i in reversed(range(bits))]
+                # binary_list_m = reversed(binary_list_m)
+
+                binary_list_n = [(n >> i) & 1 for i in reversed(range(bits))]
+                # binary_list_n = reversed(binary_list_n)
+
+                qp.MultiControlledX(wires = wires_m + wires_n + [wires_aux[0]], control_values = binary_list_m + binary_list_n)
+                # qp.MultiControlledX(wires = wires_m + wires_n + [wires_aux[0]], control_values = binary_list_n + binary_list_m)
+
+                qp.Z(wires=wires_aux[0])
+
+                qp.MultiControlledX(wires = wires_m + wires_n + [wires_aux[0]], control_values = binary_list_m + binary_list_n)
+                # qp.MultiControlledX(wires = wires_m + wires_n + [wires_aux[0]], control_values = binary_list_n + binary_list_m)
+
+                
 
 # These functions are responsible for testing the solution.
 wires_m = [0, 1, 2]
